@@ -1,4 +1,5 @@
 /* Populate tables */
+/*Populate clientes*/
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (1,'nombre1','apellido1','correo1@correo.cl','2020-09-10','');
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (2,'nombre2','apellido2','correo2@correo.cl','2020-09-11','');
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (3,'nombre3','apellido3','correo3@correo.cl','2020-09-11','');
@@ -21,3 +22,21 @@ INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (19,'nom
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (20,'nombre20','apellido20','correo20@correo.cl','2020-09-11','');
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (21,'nombre21','apellido21','correo21@correo.cl','2020-09-11','');
 INSERT INTO clientes (id,nombre,apellido,email, create_at, foto) VALUES (22,'nombre22','apellido22','correo22@correo.cl','2020-09-11','');
+/*populate productos*/
+Insert Into productos (nombre,precio,create_at) VALUES('producto1','1000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto2','20000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto3','3000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto4','40000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto5','5000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto6','60000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto7','7000',NOW());
+Insert Into productos (nombre,precio,create_at) VALUES('producto8','80000',NOW());
+/*populate facturas*/
+INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES ('Factura Equipos', null,1,NOW());
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES (1,1,1);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES (2,1,4);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES (1,1,5);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES (1,1,7);
+
+INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES ('Factura Biciclet', 'Nota importante',1,NOW());
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES (3,2,6);

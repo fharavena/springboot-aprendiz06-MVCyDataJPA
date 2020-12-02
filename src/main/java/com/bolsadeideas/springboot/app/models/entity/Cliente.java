@@ -1,13 +1,18 @@
 package com.bolsadeideas.springboot.app.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +31,7 @@ public class Cliente implements Serializable {
 	private Long id;
 
 	@NotEmpty
-	//@Size(min=4, max=12)
+	// @Size(min=4, max=12)
 	private String nombre;
 	@NotEmpty
 	private String apellido;
@@ -37,10 +42,19 @@ public class Cliente implements Serializable {
 	@NotNull
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createAt;
+
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Factura> facturas;
+
+	public Cliente() {
+		facturas = new ArrayList<Factura>();
+
+	}
+
 	private String foto;
-		
+
 	public Long getId() {
 		return id;
 	}
@@ -84,8 +98,6 @@ public class Cliente implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
 
 	public String getFoto() {
 		return foto;
@@ -95,7 +107,24 @@ public class Cliente implements Serializable {
 		this.foto = foto;
 	}
 
+	public List<Factura> getFacturas() {
+		return facturas;
+	}
 
+	public void setFacturas(List<Factura> facturas) {
+		this.facturas = facturas;
+	}
+
+	public void addFactura(Factura factura) {
+		facturas.add(factura);
+	}
+	
+	
+
+	@Override
+	public String toString() {
+		return nombre + " " + apellido;
+	}
 
 	private static final long serialVersionUID = 1L;
 

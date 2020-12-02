@@ -8,6 +8,10 @@
 		<div class="card bg-dark text-white">
 			<div class="card-header" th:text="${titulo}"></div>
 			<div class="card-body">
+				<h4 class="card-title">
+					<a th:href="@{'/listar/'}"
+						class="btn btn-light btn-xs">&laquo; volver</a>
+				</h4>
 
 
 				<div th:object="${cliente}" th:remove="tag">

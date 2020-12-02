@@ -52,7 +52,7 @@ public class ClienteController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+ 
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
 				.body(recurso);
@@ -60,7 +60,8 @@ public class ClienteController {
 
 	@GetMapping(value = "/ver/{id}")
 	public String listar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
-		Cliente cliente = clienteService.findOne(id);
+		//Cliente cliente = clienteService.findOne(id);
+		Cliente cliente = clienteService.fetchByIdWithFacturas(id);
 		if (cliente == null) {
 			flash.addFlashAttribute("error", "El cliente no existe en la base de datos");
 			return "redirect:/listar";
