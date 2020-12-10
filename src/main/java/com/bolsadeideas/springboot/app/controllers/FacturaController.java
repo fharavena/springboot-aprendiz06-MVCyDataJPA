@@ -47,7 +47,7 @@ public class FacturaController {
 	public String ver(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash, Locale locale) {
 
 		Factura factura = clienteService.fetchFacturaByIdWithClienteWhithItemFacturaWithProducto(id);
-		//Factura factura = clienteService.findFacturaById(id);
+		
 		if (factura==null) {
 			flash.addFlashAttribute("error", messageSource.getMessage("text.factura.flash.db.error",null, locale));
 			return "redirect:/listar";

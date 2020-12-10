@@ -17,6 +17,7 @@
 					<a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary btn-xs"
 						th:href="@{'/factura/form/' + ${cliente.id}}"
 						th:text="#{text.cliente.factura.crear}"></a>
+						
 				</h4>
 
 				<img th:if="${#strings.length(cliente.foto) > 0}"
