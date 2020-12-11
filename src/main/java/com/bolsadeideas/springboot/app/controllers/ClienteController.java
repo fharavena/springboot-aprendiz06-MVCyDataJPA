@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,7 @@ import com.bolsadeideas.springboot.app.models.entity.Cliente;
 import com.bolsadeideas.springboot.app.models.service.IClienteService;
 import com.bolsadeideas.springboot.app.models.service.IUploadFileService;
 import com.bolsadeideas.springboot.app.util.paginator.PageRender;
+import com.bolsadeideas.springboot.app.view.xml.ClienteList;
 
 @Controller
 @SessionAttributes("cliente")
@@ -57,7 +59,7 @@ public class ClienteController {
 
 	@Autowired
 	private IUploadFileService uploadFileService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
 
@@ -79,7 +81,8 @@ public class ClienteController {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@GetMapping(value = "/ver/{id}")
-	public String listar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash, Locale locale) {
+	public String listar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash,
+			Locale locale) {
 		Cliente cliente = clienteService.fetchByIdWithFacturas(id);
 		if (cliente == null) {
 			flash.addFlashAttribute("error", messageSource.getMessage("text.cliente.flash.db.error", null, locale));
@@ -87,15 +90,19 @@ public class ClienteController {
 		}
 
 		model.put("cliente", cliente);
-		model.put("titulo", messageSource.getMessage("text.cliente.detalle.titulo", null, locale).concat(": ").concat(cliente.getNombre()));
+		model.put("titulo", messageSource.getMessage("text.cliente.detalle.titulo", null, locale).concat(": ")
+				.concat(cliente.getNombre()));
 		return "ver";
+	}
+	
+	@GetMapping(value = "/listar-rest")
+	public @ResponseBody ClienteList listarRest() {
+		return new ClienteList(clienteService.findAll());
 	}
 
 	@RequestMapping(value = { "/listar", "/" }, method = RequestMethod.GET)
 	public String listar(@RequestParam(name = "page", defaultValue = "0 ") int page, Model model,
-			Authentication authentication,
-			HttpServletRequest request,
-			Locale locale) {
+			Authentication authentication, HttpServletRequest request, Locale locale) {
 		if (authentication != null) {
 			logger.info("Hola usuario autenticado, tu username es: ".concat(authentication.getName()));
 		}
@@ -107,24 +114,27 @@ public class ClienteController {
 					"Utilizando SecurityContextHolder.getContext().getAuthentication(): Usuarios autenticado username: "
 							.concat(auth.getName()));
 		}
-		
-		if(hasRole("ROLE_ADMIN")) {
+
+		if (hasRole("ROLE_ADMIN")) {
 			logger.info("Hola ".concat(auth.getName()).concat(" tienes acceso!"));
-		}else {
+		} else {
 			logger.info("Hola ".concat(auth.getName()).concat(" no tienes acceso"));
 		}
-		
-		SecurityContextHolderAwareRequestWrapper securityContext = new SecurityContextHolderAwareRequestWrapper(request, "");
-		
-		if(securityContext.isUserInRole("ROLE_ADMIN")) {
-			logger.info("Forma usando SecurityContextHolderAwareRequestWrapper: Hola ".concat(auth.getName()).concat(" tienes acceso!"));
-		}else {
-			logger.info("Forma usando SecurityContextHolderAwareRequestWrapper: Hola ".concat(auth.getName()).concat(" No tienes acceso!"));
+
+		SecurityContextHolderAwareRequestWrapper securityContext = new SecurityContextHolderAwareRequestWrapper(request,
+				"");
+
+		if (securityContext.isUserInRole("ROLE_ADMIN")) {
+			logger.info("Forma usando SecurityContextHolderAwareRequestWrapper: Hola ".concat(auth.getName())
+					.concat(" tienes acceso!"));
+		} else {
+			logger.info("Forma usando SecurityContextHolderAwareRequestWrapper: Hola ".concat(auth.getName())
+					.concat(" No tienes acceso!"));
 		}
-		
-		if(request.isUserInRole("ROLE_ADMIN")) {
+
+		if (request.isUserInRole("ROLE_ADMIN")) {
 			logger.info("Forma usando HttpServletRequest: Hola ".concat(auth.getName()).concat(" tienes acceso!"));
-		}else {
+		} else {
 			logger.info("Forma usando HttpServletRequest: Hola ".concat(auth.getName()).concat(" No tienes acceso!"));
 		}
 
@@ -149,10 +159,11 @@ public class ClienteController {
 		return "form";
 	}
 
-	//@Secured("ROLE_ADMIN")
+	// @Secured("ROLE_ADMIN")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/form/{id}")
-	public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash, Locale locale) {
+	public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash,
+			Locale locale) {
 		Cliente cliente = null;
 		if (id > 0) {
 			cliente = clienteService.findOne(id);
@@ -193,10 +204,14 @@ public class ClienteController {
 				e.printStackTrace();
 			}
 
-			flash.addFlashAttribute("info", messageSource.getMessage("text.cliente.flash.foto.subir.success", null, locale) + "'" + uniqueFilename + "'");
+			flash.addFlashAttribute("info",
+					messageSource.getMessage("text.cliente.flash.foto.subir.success", null, locale) + "'"
+							+ uniqueFilename + "'");
 			cliente.setFoto(uniqueFilename);
 		}
-		String mensajeFlash = (cliente.getId() != null) ? messageSource.getMessage("text.cliente.flash.editar.success", null, locale) : messageSource.getMessage("text.cliente.flash.crear.success", null, locale);
+		String mensajeFlash = (cliente.getId() != null)
+				? messageSource.getMessage("text.cliente.flash.editar.success", null, locale)
+				: messageSource.getMessage("text.cliente.flash.crear.success", null, locale);
 
 		clienteService.save(cliente);
 		status.setComplete();
@@ -211,10 +226,13 @@ public class ClienteController {
 			Cliente cliente = clienteService.findOne(id);
 
 			clienteService.delete(id);
-			flash.addFlashAttribute("success", messageSource.getMessage("text.cliente.flash.eliminar.success", null, locale));
+			flash.addFlashAttribute("success",
+					messageSource.getMessage("text.cliente.flash.eliminar.success", null, locale));
 
 			if (uploadFileService.delete(cliente.getFoto())) {
-				String mensajeFotoEliminar = String.format(messageSource.getMessage("text.cliente.flash.foto.eliminar.success", null, locale), cliente.getFoto());
+				String mensajeFotoEliminar = String.format(
+						messageSource.getMessage("text.cliente.flash.foto.eliminar.success", null, locale),
+						cliente.getFoto());
 				flash.addFlashAttribute("info", mensajeFotoEliminar);
 			}
 
@@ -235,12 +253,10 @@ public class ClienteController {
 		Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 		return authorities.contains(new SimpleGrantedAuthority(role));
 		/*
-		for(GrantedAuthority authority: authorities) {
-			if(role.equals(authority.getAuthority())){
-				logger.info("Hola usuario ".concat(auth.getName()).concat(" tu rol es: ").concat(authority.getAuthority()));
-				return true;
-			}
-		}
-		return false;*/
+		 * for(GrantedAuthority authority: authorities) {
+		 * if(role.equals(authority.getAuthority())){
+		 * logger.info("Hola usuario ".concat(auth.getName()).concat(" tu rol es: ").
+		 * concat(authority.getAuthority())); return true; } } return false;
+		 */
 	}
 }
