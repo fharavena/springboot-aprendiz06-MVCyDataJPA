@@ -18,3 +18,16 @@ Run compiled app:
 ```sh
 $ java -jar target/nombre_aplicacion.jar
 ```
+
+```sh
+Demo
+https://faravena-spring-boot-jpa-mvc.herokuapp.com/
+
+Admin
+user: admin
+pass: 12345
+
+User
+user: user
+pass: 12345
+```
